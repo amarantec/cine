@@ -5,16 +5,27 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.com/amarantec/cine/internal/movie"
+	"gitlab.com/amarantec/cine/internal/theater"
 )
 
 func SetRoutes(conn *pgxpool.Pool) *http.ServeMux {
 	m := http.NewServeMux()
 
-	var movieRepository = movie.NewMovieRepository(conn)
-	var movieService = movie.MovieService(movieRepository)
-	var movieHandler = NewMovieHandler(movieService)
+	// Movie dependency injection
+	movieRepository := movie.NewMovieRepository(conn)
+	movieService := movie.MovieService(movieRepository)
+	movieHandler := NewMovieHandler(movieService)
+	// Theater dependency injection
+	theaterRepository := theater.NewTheaterRepository(conn)
+	theaterService := theater.NewTheaterService(theaterRepository)
+	theaterHandler := NewTheaterHandler(theaterService)
 
-	m.HandleFunc("/movies/list-movies", movieHandler.ListMovies)
+	/*
+		ROUTES
+	*/
 
+	m.HandleFunc("/movies/list-movies", movieHandler.listMovies)
+	m.HandleFunc("/movies/get-movie-by-id/{id}", movieHandler.getMovieById)
+	m.HandleFunc("/theaters/list-theaters", theaterHandler.listTheaters)
 	return m
 }
