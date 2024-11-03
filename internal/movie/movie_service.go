@@ -8,6 +8,7 @@ import (
 
 type MovieService interface {
 	ListMovies(ctx context.Context) ([]internal.Movie, error)
+	GetMovieById(ctx context.Context, id uint) (internal.Movie, error)
 }
 
 type movieService struct {
@@ -20,4 +21,8 @@ func NewMovieService(repository MovieRepository) MovieService {
 
 func (s *movieService) ListMovies(ctx context.Context) ([]internal.Movie, error) {
 	return s.movieRepository.ListMovies(ctx)
+}
+
+func (s *movieService) GetMovieById(ctx context.Context, id uint) (internal.Movie, error) {
+	return s.movieRepository.GetMovieById(ctx, id)
 }
