@@ -20,5 +20,7 @@ func OpenConnection(ctx context.Context, connectionString string) (*pgxpool.Pool
 		return nil, err
 	}
 
+	createTables(ctx)
+
 	return Conn, nil
 }
