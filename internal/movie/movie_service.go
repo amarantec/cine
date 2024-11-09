@@ -9,6 +9,8 @@ import (
 type MovieService interface {
 	ListMovies(ctx context.Context) ([]internal.Movie, error)
 	GetMovieById(ctx context.Context, id uint) (internal.Movie, error)
+	AddMovie(ctx context.Context, movie internal.Movie) (uint, error)
+	GetMoviesByGenre(ctx context.Context, genre string) ([]internal.Movie, error)
 }
 
 type movieService struct {
@@ -25,4 +27,12 @@ func (s *movieService) ListMovies(ctx context.Context) ([]internal.Movie, error)
 
 func (s *movieService) GetMovieById(ctx context.Context, id uint) (internal.Movie, error) {
 	return s.movieRepository.GetMovieById(ctx, id)
+}
+
+func (s *movieService) AddMovie(ctx context.Context, movie internal.Movie) (uint, error) {
+	return s.movieRepository.AddMovie(ctx, movie)
+}
+
+func (s *movieService) GetMoviesByGenre(ctx context.Context, genre string) ([]internal.Movie, error) {
+	return s.movieRepository.GetMoviesByGenre(ctx, genre)
 }
