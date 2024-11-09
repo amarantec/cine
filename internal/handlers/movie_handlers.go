@@ -31,7 +31,7 @@ func (h *MovieHandler) listMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonResponse, _ := json.Marshal(movies)
+	jsonResponse, _ := json.MarshalIndent(movies, "", "  ")
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
