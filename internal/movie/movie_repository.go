@@ -36,7 +36,11 @@ func (r *movieRepository) ListMovies(ctx context.Context) ([]internal.Movie, err
 			director, 
 			"cast", 
 			release_date, 
-			running_time, age_group FROM movies;`)
+			running_time, 
+			age_group,
+			created_at,
+			updated_at,
+			deleted_at FROM movies;`)
 
 	if err != nil {
 		return []internal.Movie{}, err
@@ -55,7 +59,10 @@ func (r *movieRepository) ListMovies(ctx context.Context) ([]internal.Movie, err
 			&m.Cast,
 			&m.ReleaseDate,
 			&m.RunningTime,
-			&m.AgeGroup); err != nil {
+			&m.AgeGroup,
+			&m.CreatedAt,
+			&m.UpdatedAt,
+			&m.DeletedAt); err != nil {
 			return []internal.Movie{}, err
 		}
 		movies = append(movies, m)
@@ -81,9 +88,14 @@ func (r *movieRepository) GetMovieById(ctx context.Context, id uint) (internal.M
 				"cast", 
 				release_date, 
 				running_time, 
-				age_group 
+				age_group,
+				created_at,
+				updated_at,
+				deleted_at 
 				FROM movies WHERE id = $1;`, id).Scan(&movie.Title,
-			&movie.Synopsis, &movie.Genre, &movie.Director, &movie.Cast, &movie.ReleaseDate, &movie.RunningTime, &movie.AgeGroup); err != nil {
+			&movie.Synopsis, &movie.Genre, &movie.Director, &movie.Cast, 
+			&movie.ReleaseDate, &movie.RunningTime, &movie.AgeGroup,
+			&movie.CreatedAt, &movie.UpdatedAt, &movie.DeletedAt); err != nil {
 		if err == pgx.ErrNoRows {
 			return internal.Movie{}, nil
 		}
@@ -106,7 +118,7 @@ func (r *movieRepository) AddMovie(ctx context.Context, movie internal.Movie) (u
 				movie.ReleaseDate, 
 				movie.RunningTime, 
 				movie.AgeGroup).Scan(&movie.Id); err != nil {
-					return ZERO_VALUE, err
+					return internal.ZERO, err
 	}
 
 	return movie.Id, nil
