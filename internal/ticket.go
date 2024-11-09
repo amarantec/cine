@@ -1,8 +1,11 @@
 package internal
 
+import "time"
+
 type Ticket struct {
-	Id       uint   `json:"ticket"`
-	MovieId  uint   `json:"movie_id"`
-	Movie    string `json:"movie"`
-	CineRoom string `json:"cine_room"`
+	Id              uint        `json:"ticket"`
+    SessionId       uint        `json:"session_id"`
+    UserId          uint        `json:"user_id"`
+	Seat            Seat        `json:"seat"`
+	PurchaseDate    time.Time   `json:"purchase_date"`
 }
