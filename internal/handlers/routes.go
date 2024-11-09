@@ -16,6 +16,7 @@ func SetRoutes(conn *pgxpool.Pool) *http.ServeMux {
 	movieRepository := movie.NewMovieRepository(conn)
 	movieService := movie.MovieService(movieRepository)
 	movieHandler := NewMovieHandler(movieService)
+
 	// Theater dependency injection
     theaterMux := http.NewServeMux()
 	theaterRepository := theater.NewTheaterRepository(conn)
@@ -33,7 +34,8 @@ func SetRoutes(conn *pgxpool.Pool) *http.ServeMux {
 
 
 	theaterMux.HandleFunc("/list-theaters", theaterHandler.listTheaters)
-
+	theaterMux.HandleFunc("/get-theater-by-id/{id}", theaterHandler.getTheaterById)
+	theaterMux.HandleFunc("/add-theater", theaterHandler.addTheater)
 
     m.Handle("/movies/", http.StripPrefix("/movies", movieMux))
     m.Handle("/theaters/", http.StripPrefix("/theaters", theaterMux))
