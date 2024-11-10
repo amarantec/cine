@@ -31,10 +31,10 @@ func (s *addressService) GetAddress(ctx context.Context, id uint) (internal.Addr
 }
 
 func (s *addressService) UpdateAddress(ctx context.Context, address internal.Address) (bool, error) {
-	return s.addressRepository.UpdateAddress(ctx, id)
+	return s.addressRepository.UpdateAddress(ctx, address)
 }
 
-func (s *addressService) DeleteAddress(ctx context.Context, address internal.Address) (bool, error) {
+func (s *addressService) DeleteAddress(ctx context.Context, id uint) (bool, error) {
 	return s.addressRepository.DeleteAddress(ctx, id)
 }
 
