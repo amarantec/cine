@@ -23,8 +23,6 @@ func NewMovieRepository(conn *pgxpool.Pool) MovieRepository {
 	return &movieRepository{Conn: conn}
 }
 
-const ZERO_VALUE = 0
-
 func (r *movieRepository) ListMovies(ctx context.Context) ([]internal.Movie, error) {
 
 	rows, err := r.Conn.Query(
@@ -39,8 +37,7 @@ func (r *movieRepository) ListMovies(ctx context.Context) ([]internal.Movie, err
 			running_time, 
 			age_group,
 			created_at,
-			updated_at,
-			deleted_at FROM movies;`)
+			updated_at, FROM movies WHERE deleted_at IS NULL;`)
 
 	if err != nil {
 		return []internal.Movie{}, err
@@ -61,8 +58,7 @@ func (r *movieRepository) ListMovies(ctx context.Context) ([]internal.Movie, err
 			&m.RunningTime,
 			&m.AgeGroup,
 			&m.CreatedAt,
-			&m.UpdatedAt,
-			&m.DeletedAt); err != nil {
+			&m.UpdatedAt); err != nil {
 			return []internal.Movie{}, err
 		}
 		movies = append(movies, m)
@@ -90,12 +86,11 @@ func (r *movieRepository) GetMovieById(ctx context.Context, id uint) (internal.M
 				running_time, 
 				age_group,
 				created_at,
-				updated_at,
-				deleted_at 
-				FROM movies WHERE id = $1;`, id).Scan(&movie.Title,
+				updated_at
+				FROM movies WHERE id = $1 AND deleted_at IS NULL;`, id).Scan(&movie.Title,
 			&movie.Synopsis, &movie.Genre, &movie.Director, &movie.Cast, 
 			&movie.ReleaseDate, &movie.RunningTime, &movie.AgeGroup,
-			&movie.CreatedAt, &movie.UpdatedAt, &movie.DeletedAt); err != nil {
+			&movie.CreatedAt, &movie.UpdatedAt); err != nil {
 		if err == pgx.ErrNoRows {
 			return internal.Movie{}, nil
 		}
@@ -137,7 +132,7 @@ func (r *movieRepository) GetMoviesByGenre(ctx context.Context, genre string) ([
 				release_date,
 				running_time,
 				age_group FROM movies
-				WHERE $1 = ANY(genre);`, genre)
+				WHERE $1 = ANY(genre) AND deleted_at IS NULL;`, genre)
 
 	if err != nil {
 		return []internal.Movie{}, err
