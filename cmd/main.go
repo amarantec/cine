@@ -45,7 +45,7 @@ func main() {
 		Addr:    port,
 		Handler: mux,
 	}
-	fmt.Printf("Server listen on: %s\n", server.Addr)
+	fmt.Printf("Server listen on %s\n", server.Addr)
 	log.Fatal(server.ListenAndServe())
 
 }
