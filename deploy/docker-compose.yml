@@ -1,0 +1,29 @@
+networks:
+  cine_network:
+
+services:
+  cine-go-db:
+    networks:
+      - cine_network
+    image: postgres:16
+    container_name: cine-go-db
+    env_file:
+      - ../config/.env 
+    volumes:
+     - postgres_data:/var/lib/postgresql/data
+
+  server:
+    networks:
+      - cine_network
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
+    container_name: cine_server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - cine-go-db
+    env_file:
+      - ../config/.env
+volumes:
+  postgres_data:

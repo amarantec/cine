@@ -114,3 +114,59 @@ func (h *MovieHandler) getMoviesByGenre(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonResponse)
 }
+
+func (h *MovieHandler) updateMovie(w http.ResponseWriter, r *http.Request) {
+    ctxTimeout, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+    defer cancel()
+
+    movie := internal.Movie{}
+
+    if err :=
+        json.NewDecoder(r.Body).Decode(&movie); err != nil {
+            http.Error(w,
+                "could not decode this request, error: " + err.Error(),
+                http.StatusBadRequest)
+            return
+    }
+
+    response, err := h.service.UpdateMovie(ctxTimeout, movie)
+    if err != nil {
+        http.Error(w,
+            "could not update this movie, error: " + err.Error(),
+            http.StatusInternalServerError)
+        return
+    }
+
+    jsonResponse, _ := json.Marshal(response)
+
+    w.Header().Set("Content-Type", "application/json; charset=utf-8")
+    w.WriteHeader(http.StatusNoContent)
+    w.Write(jsonResponse)
+}
+
+func (h *HandlerMovie) deleteMovie(w http.ResponseWriter, r *http.Request) {
+    ctxTimeout, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+    defer cancel()
+    
+    id, err := strconv.Atoi(r.PathValue("movieId"))
+    if err != nil {
+        http.Error(w,
+            "invalid paramter, error: " + err.Error(),
+            http.StatusBadRequest)
+        return
+    }
+
+    response, err := h.service.DeleteMovie(ctxTimeout, uint(id))
+    if err != nil {
+        http.Error(w,
+            "could not delete this movie, error: " + err.Error(),
+            http.StatusInternalServerError)
+        return
+    }
+
+    jsonResponse, _ := json.Marshal(response)
+
+    w.Header().Set("Content-Type", "application/json; charset=utf-8")
+    w.WriteHeader(http.StatusNoContent)
+    w.Write(jsonResponse)
+}

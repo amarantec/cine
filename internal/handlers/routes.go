@@ -36,6 +36,7 @@ func SetRoutes(conn *pgxpool.Pool) *http.ServeMux {
 	roomRepository := room.NewRoomRepository(conn)
 	roomService := room.NewRoomService(roomRepository)
 	roomHandler := NewRoomHandler(roomService)
+    
 	/*
 		ROUTES
 	*/
@@ -44,7 +45,8 @@ func SetRoutes(conn *pgxpool.Pool) *http.ServeMux {
 	movieMux.HandleFunc("/get-movie-by-id/{id}", movieHandler.getMovieById)
 	movieMux.HandleFunc("/add-movie", movieHandler.addMovie)
 	movieMux.HandleFunc("/get-movies-by-genre/{genre}", movieHandler.getMoviesByGenre)
-
+    movieMux.HandleFunc("/update-movie", movieHandler.updateMovie)
+    movieMux.HandleFunc("/delete-movie/{movieId}", movieHandler.deleteMovie)
 
 	theaterMux.HandleFunc("/list-theaters", theaterHandler.listTheaters)
 	theaterMux.HandleFunc("/get-theater-by-id/{id}", theaterHandler.getTheaterById)
