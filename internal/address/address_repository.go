@@ -80,7 +80,7 @@ func (r *addressRepository) UpdateAddress(ctx context.Context, address internal.
 		return false, err
 	}
 
-	if res.RowsAffected() == 0 {
+	if res.RowsAffected() == internal.ZERO {
 		fmt.Println("No rows affected")
 		return false, nil
 	} else {
@@ -100,7 +100,7 @@ func (r *addressRepository) DeleteAddress(ctx context.Context, id uint) (bool, e
 		return false, err
 	}
 
-	if res.RowsAffected() == 0 {
+	if res.RowsAffected() == internal.ZERO {
 		fmt.Println("No rows affected")
 		return false, nil
 	} else {
