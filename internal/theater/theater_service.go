@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"gitlab.com/amarantec/cine/internal"
+	"unicode/utf8"
 )
 
 type TheaterService interface {
@@ -27,18 +28,22 @@ func (s *theaterService) ListTheaters(ctx context.Context) ([]internal.Theater, 
 }
 
 func (s *theaterService) GetTheaterById(ctx context.Context, id uint) (internal.Theater, error) {
-	if id <= 0 {
-		return internal.Theater{}, ErrTheaterIdEmpty
-	}
-
 	return s.theaterRepository.GetTheaterById(ctx, id)
 }
 
 func (s *theaterService) AddTheater(ctx context.Context, theater internal.Theater) (uint, error) {
+	if valid, err := validateTheater(theater); err != nil || !valid {
+		return internal.ZERO, err
+	}
+
 	return s.theaterRepository.AddTheater(ctx, theater)
 }
 
 func (s *theaterService) UpdateTheater(ctx context.Context, theater internal.Theater) (bool, error) {
+	if valid, err := validateTheater(theater); err != nil || !valid {
+		return false, err
+	}
+
 	return s.theaterRepository.UpdateTheater(ctx, theater)
 }
 
@@ -46,4 +51,23 @@ func (s *theaterService) DeleteTheater(ctx context.Context, id uint) (bool, erro
 	return s.theaterRepository.DeleteTheater(ctx, id)
 }
 
+func validateTheater(t internal.Theater) (bool, error) {
+	if t.Name == "" {
+		return false, ErrTheaterNameEmpty
+	}	
+	
+	if t.AddressId == nil {
+		return false, ErrAddressIdEmpty
+	}
+
+	if utf8.RuneCountInString(t.Name) < 2 && utf8.RuneCountInString(t.Name) > 50 {
+		return false, ErrTheaterNameInvalidFormat
+	}
+
+	return true, nil
+}
+
 var ErrTheaterIdEmpty = errors.New("theater id is should be greater than 0")
+var ErrTheaterNameEmpty = errors.New("theater name is empty")
+var ErrAddressIdEmpty = errors.New("theater address id is empty")
+var ErrTheaterNameInvalidFormat = errors.New("theater name must be beetwen 2-50 characters")
