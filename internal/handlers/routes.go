@@ -7,6 +7,7 @@ import (
 	"gitlab.com/amarantec/cine/internal/movie"
 	"gitlab.com/amarantec/cine/internal/theater"
 	"gitlab.com/amarantec/cine/internal/address"
+	"gitlab.com/amarantec/cine/internal/room"
 )
 
 func SetRoutes(conn *pgxpool.Pool) *http.ServeMux {
@@ -30,6 +31,11 @@ func SetRoutes(conn *pgxpool.Pool) *http.ServeMux {
 	addressService := address.NewAddressService(addressRepository)	
 	addressHandler := NewAddressHandler(addressService)
 
+	// Cine Room dependency injection
+	roomMux := http.NewServeMux()
+	roomRepository := room.NewRoomRepository(conn)
+	roomService := room.NewRoomService(roomRepository)
+	roomHandler := NewRoomHandler(roomService)
 	/*
 		ROUTES
 	*/
@@ -49,10 +55,14 @@ func SetRoutes(conn *pgxpool.Pool) *http.ServeMux {
 	addressMux.HandleFunc("/update-address", addressHandler.updateAddress)
 	addressMux.HandleFunc("/delete-address/{id}", addressHandler.deleteAddress)
 	
+	roomMux.HandleFunc("/list-room", roomHandler.listRooms)
+	roomMux.HandleFunc("/get-room-by-id/{theaterId}", roomHandler.getRoomById)
+	roomMux.HandleFunc("/list-available-room-seats/{theaterId}/{roomNumber}", roomHandler.listAvailableRoomSeats)
  
     m.Handle("/movies/", http.StripPrefix("/movies", movieMux))
     m.Handle("/theaters/", http.StripPrefix("/theaters", theaterMux))
 	m.Handle("/address/", http.StripPrefix("/address", addressMux))
+	m.Handle("/room/", http.StripPrefix("/room", roomMux))
 
 	return m
 }
