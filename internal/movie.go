@@ -3,16 +3,16 @@ package internal
 import "time"
 
 type Movie struct {
-	Id          uint      	`json:"id" binding:"required"`
-	Title       string    	`json:"title" binding:"required"`
-	Synopsis    string    	`json:"synopsis" binding:"required"`
-	Genre       []string  	`json:"genre" binding:"required"`
-	Director    []string  	`json:"director" binding:"required"`
-	Cast        []string  	`json:"cast" binding:"required"`
-	ReleaseDate time.Time 	`json:"release_date" binding:"required"`
-	RunningTime uint      	`json:"running_time" binding:"required"`
-	AgeGroup    uint      	`json:"age_group" binding:"required"`
+	Id          uint      	`json:"id"`
+	Title       string    	`json:"title"`
+	Synopsis    string    	`json:"synopsis"`
+	Genre       []string  	`json:"genre"`
+	Director    []string  	`json:"director"`
+	Cast        []string  	`json:"cast"`
+	ReleaseDate time.Time 	`json:"release_date"`
+	RunningTime uint      	`json:"running_time"`
+	AgeGroup    uint      	`json:"age_group"`
 	CreatedAt	time.Time 	`json:"created_at"`	
-	UpdatedAt	*time.Time  `json:"updated_at, omitempty"`
-	DeletedAt	*time.Time  `json:"deleted_at, omitempty"`	
+	UpdatedAt	*time.Time  `json:"updated_at"`
+	DeletedAt	*time.Time  `json:"deleted_at"`	
 }
