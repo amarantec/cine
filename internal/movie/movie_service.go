@@ -12,6 +12,8 @@ type MovieService interface {
 	GetMovieById(ctx context.Context, id uint) (internal.Movie, error)
 	AddMovie(ctx context.Context, movie internal.Movie) (uint, error)
 	GetMoviesByGenre(ctx context.Context, genre string) ([]internal.Movie, error)
+    UpdateMovie(ctx context.Context, movie internal.Movie) (bool, error)
+    DeleteMovie(Ctx context.Context, id uint) (bool, error)
 }
 
 type movieService struct {
@@ -41,6 +43,19 @@ func (s *movieService) AddMovie(ctx context.Context, movie internal.Movie) (uint
 func (s *movieService) GetMoviesByGenre(ctx context.Context, genre string) ([]internal.Movie, error) {
 	return s.movieRepository.GetMoviesByGenre(ctx, genre)
 }
+
+func (s *movieService) UpdateMovie(ctx context.Context, movie internal.Movie) (bool, error) {
+    if valid, err := validateMovie(movie); err != nil || !valid {
+        return false, err
+    }
+
+    return s.movieRepository.UpdateMovie(ctx, movie)
+}
+
+func (s *movieService) DeleteMovie(ctx context.Context, id uint) (bool, error) {
+    return s.movieRepository.DeleteMovie(ctx, id)
+}
+
 
 func validateMovie(m internal.Movie) (bool, error) {
     if m.Title == "" {

@@ -2,7 +2,8 @@ package movie
 
 import (
 	"context"
-
+    "fmt"
+    "time"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.com/amarantec/cine/internal"
@@ -13,6 +14,8 @@ type MovieRepository interface {
 	GetMovieById(ctx context.Context, id uint) (internal.Movie, error)
 	AddMovie(ctx context.Context, movie internal.Movie) (uint, error)
 	GetMoviesByGenre(ctx context.Context, genre string) ([]internal.Movie, error)
+    UpdateMovie(ctx context.Context, movie internal.Movie) (bool, error)
+    DeleteMovie(ctx context.Context, id uint) (bool, error)
 }
 
 type movieRepository struct {
@@ -164,4 +167,50 @@ func (r *movieRepository) GetMoviesByGenre(ctx context.Context, genre string) ([
 	}
 
 	return movies, nil
+}
+func (r *movieRepository) UpdateMovie(ctx context.Context, movie internal.Movie) (bool, error) {
+    res, err :=
+        r.Conn.Exec(
+            ctx,
+            `UPDATE movies SET title = $2, 
+                synopsis = $3, 
+                genre = $4, 
+                director = $5, 
+                "cast" = $6, 
+                release_date = $7, 
+                running_time = $8, 
+                age_group = $9 
+                WHERE id = $1 AND deleted_at IS NULL;`, movie.Id, movie.Title, movie.Synopsis, movie.Genre, movie.Director, movie.Cast,
+                    movie.ReleaseDate, movie.RunningTime, movie.AgeGroup) 
+    if err != nil {
+        return false, err
+    }
+
+    if res.RowsAffected() == internal.ZERO {
+        fmt.Println("No rows affected")
+        return false, nil
+    } else {
+        fmt.Printf("%d rows affected.\n", res.RowsAffected())
+        return true, nil
+    }
+}
+
+
+func (r *movieRepository) DeleteMovie(ctx context.Context, id uint) (bool, error) {
+    res, err :=
+        r.Conn.Exec(
+            ctx,
+            `UPDATE movies SET deleted_at = $2 WHERE id = $1;`, id, time.Now())
+
+    if err != nil {
+        return false, err
+    }
+
+    if res.RowsAffected() == internal.ZERO {
+        fmt.Println("No rows affected")
+        return false, nil
+    } else {
+        fmt.Printf("%d rows affected.\n", res.RowsAffected())
+        return true, nil
+    }
 }
