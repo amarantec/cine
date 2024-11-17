@@ -37,7 +37,7 @@ func (r *movieRepository) ListMovies(ctx context.Context) ([]internal.Movie, err
 			running_time, 
 			age_group,
 			created_at,
-			updated_at, FROM movies WHERE deleted_at IS NULL;`)
+			updated_at FROM movies WHERE deleted_at IS NULL;`)
 
 	if err != nil {
 		return []internal.Movie{}, err
