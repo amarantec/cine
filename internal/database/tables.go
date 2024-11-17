@@ -22,7 +22,7 @@ func createTables(ctx context.Context) {
 	_, err := Conn.Exec(ctx, createMovieTable)
 
 	if err != nil {
-		panic("Could not create movies table.")
+		panic(err)
 	}
 
 	createAddressTable := `
