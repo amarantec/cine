@@ -12,8 +12,8 @@ func createTables(ctx context.Context) {
 			director		TEXT[] NOT NULL,
 			"cast"			TEXT[] NOT NULL,
 			release_date	TIMESTAMP,
-			running_time	INTEGER NOT NULL,
-			age_group		INTEGER NOT NULL,
+			running_time	TEXT NOT NULL,
+			age_group		TEXT NOT NULL,
 			created_at		TIMESTAMP DEFAULT NOW(),
 			updated_at		TIMESTAMP DEFAULT NOW(),
 			deleted_at		TIMESTAMP NULL	
