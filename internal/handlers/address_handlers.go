@@ -10,14 +10,28 @@ import (
 	"strconv"
 )
 
+// AddressHandler is responsible for managing addresses in the API.
 type AddressHandler struct {
 	service address.AddressService
 }
 
+// NewAddressHandler create a new AddressHandler
 func NewAddressHandler(service address.AddressService) *AddressHandler {
 	return &AddressHandler{service: service}
 }
 
+// insertAddress godoc
+//
+// @Sumary          Insert a new address
+// @Description     Insert a new address in database
+// @Tags            addresses
+// @Accept          json
+// @Produce         json
+// @Param           address body internal.Address true "Address"
+// @Success         201 {object} internal.Address
+// @Failure         400 {object} string "Err when decoding the address"
+// @Failure         500 {object} string "Err when insert the address"
+// @Router          /insert-address [post]
 func (h *AddressHandler) insertAddress(w http.ResponseWriter, r *http.Request) {
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
 	defer cancel()
@@ -46,6 +60,18 @@ func (h *AddressHandler) insertAddress(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResponse)
 }
 
+// getAddress godoc
+//
+// @Sumary          Get a address by Id
+// @Description     Retrieve address info using its Id
+// @Tags            addresses
+// @Accept          json
+// @Produce         json
+// @Param           id path uint true "Address Id"
+// @Success         200 {object} internal.Address "Details of the address"
+// @Failure         400 {object} string "Invalid parameter"
+// @Failure         500 {object} string "Err could not get this address"
+// @Router          /get-address/{id} [get]
 func (h *AddressHandler) getAddress(w http.ResponseWriter, r *http.Request) {
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
 	defer cancel()
@@ -73,6 +99,18 @@ func (h *AddressHandler) getAddress(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResponse)
 }
 
+// updateAddress godoc
+//
+// @Sumary          Update a address 
+// @Description     Update address info 
+// @Tags            addresses
+// @Accept          json
+// @Produce         json
+// @Param           address body internal.Address true "Address"
+// @Success         204 {object} boolean "true"
+// @Failure         400 {object} string "Err could not parse this request"
+// @Failure         500 {object} string "Err could not update this address"
+// @Router          /update-address [put]
 func (h *AddressHandler) updateAddress(w http.ResponseWriter, r *http.Request) {
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
 	defer cancel()
@@ -101,6 +139,18 @@ func (h *AddressHandler) updateAddress(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResponse)
 }
 
+// deleteAddress godoc
+//
+// @Sumary          Delete a address 
+// @Description     Deletete address register 
+// @Tags            addresses
+// @Accept          json
+// @Produce         json
+// @Param           id path uint true "Address Id"
+// @Success         204 {object} boolean "true"
+// @Failure         400 {object} string "Err invalid parameter"
+// @Failure         500 {object} string "Err could not delete this address"
+// @Router          /delete-address/{id} [delete]
 func (h *AddressHandler) deleteAddress(w http.ResponseWriter, r *http.Request) {
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
 	defer cancel()
